@@ -17,10 +17,10 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
     $hash_password = hash('sha256', $password);
 
-    $sql = "SELECT * FROM user WHERE email='$email' AND 
-        password='$hash_password'";
-
-    $result = $konek->query($sql);
+    $stmt = $konek->prepare("SELECT * FROM user WHERE email = ? AND password = ?");
+    $stmt->bind_param("ss", $email, $hash_password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
